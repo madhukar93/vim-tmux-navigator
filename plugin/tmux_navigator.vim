@@ -138,3 +138,21 @@ function! s:TmuxAwareNavigate(direction)
     let s:tmux_is_last_pane = 0
   endif
 endfunction
+
+function! s:set_is_vim()
+  call s:TmuxCommand("set-option -p @is_vim yes")
+endfunction
+
+function! s:unset_is_vim()
+  call s:TmuxCommand("set-option -p -u @is_vim")
+endfunction
+
+augroup tmux_navigator_is_vim
+  au!
+  autocmd VimEnter * call s:set_is_vim()
+  autocmd VimLeave * call s:unset_is_vim()
+  if exists('##VimSuspend')
+    autocmd VimSuspend * call s:unset_is_vim()
+    autocmd VimResume * call s:set_is_vim()
+  endif
+augroup END
